@@ -24,6 +24,6 @@ As this taxonomy is derived from WordNet and OpenStreetmap the following license
 
 ## Open Issues
 
-- Hypernym semantics don't always match `rdf:subClassOf' semantics
+- Hypernym semantics don't always match `rdf:subClassOf` semantics
 - Multiple super classes mean that the sub class is on the intersection of them which does not always match the intended meaning of the original WordNet data
-- Shops can be better linked to the concepts covering what is sold there, but this cannot be modeled by a `rdfs:subClassOf' relation
+- Shops can be better linked to the concepts covering what is sold there, but this cannot be modeled by a `rdfs:subClassOf` relation
