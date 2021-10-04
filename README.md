@@ -6,6 +6,27 @@ This repository contains a rich taxonomy meant to better specify spatial entitie
 
 ### RDFization of WordNet terms and taxonomy
 
+To generate a class hierarchy/taxonomy in RDF using the WordNet terms we make use of the [Prolog files provided by the WordNet project](https://wordnet.princeton.edu/documentation/prologdb5wn). The Prolog files `wn_hyp.pl` and `wn_s.pl`, respectively, contain information about hyperymy relations between synsets, and actual words linked to synsets. So, the entry
+
+```Prolog
+hyp(100001930,100001740).
+```
+
+says, that the synset `100001740` is a hypernym of synset `100001930`. With this information we create IRIs for each synset ID and RDF triples stating that the IRI of the first ID in the `hyp/2` predicate is a subclass of the IRI of the second one:
+
+```Turtle
+<http://sda.tech/wn/100001930> a <http://www.w3.org/2002/07/owl#Class> ;
+    rdfs:subClassOf <http://sda.tech/wn/100001740> .
+```
+
+In the `wn_s.pl` file we can look up all words for a synset and add them as labels, e.g.
+
+```Turtle
+<http://sda.tech/wn/100001930> rdfs:label "physical entity" .
+```
+
+The Python script accomplishing this, can be found [here](scripts/mkclasses.py).
+
 ### LinkedGeoData taxonomy
 
 - Label cleaning
