@@ -29,7 +29,13 @@ The Python script accomplishing this, can be found [here](scripts/mkclasses.py).
 
 ### LinkedGeoData taxonomy
 
-- Label cleaning
+To get all classes defined in the LinkedGeoData ontology we refer to the latest ontology file available on the [LinkedGeoData project website](https://hobbitdata.informatik.uni-leipzig.de/LinkedGeoData/downloads.linkedgeodata.org/releases/2014-09-09/2014-09-09-ontology.sorted.nt.bz2). In a first preprocessing step, we removed all labels using a simple `grep` command:
+
+```bash
+grep -v 'http://www.w3.org/2000/01/rdf-schema#label' 2014-09-09-ontology.sorted.nt > lgd_ontology_wo_labels.nt
+```
+
+This is done for two reasons. First, the labels are provided in many different language and for the linking step we are only interested in the English labels. Second, not all resources have labels so we decided to generate English labels in a uniform way. Here, we make use of the local parts of the IRIs which usually correspond to the labels, written in camel case. So to get English labels in a canonical way, we take the local part, e.g. `AmbulanceStation` from the IRI `<http://linkedgeodata.org/ontology/AmbulanceStation>` and 'undo' the camel case, getting 'ambulance station' which will be used as new label for `<http://linkedgeodata.org/ontology/AmbulanceStation>`. The label generation of the LinkedGeoData ontology _without any class labels_ is done by the [createlgdlabels.py script provided in this repo](scripts/createlgdlabels.py).
 
 ### Linking both taxonomies
 
