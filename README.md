@@ -45,6 +45,13 @@ To link both the WordNet and the LinkedGeoData taxonomies we used the [LIMES lin
 
 In the manual creation step we removed all WordNet classes which are not superclasses of a LinkedGeoData class. Further we checked all direct `rdfs:subClassOf` relations between a LinkedGeoData (sub-) and WordNet (super-) class and removed those which seemed inappropriate (e.g. since both classes refer to different concepts/meanings even though their labels are similar). The result of this manual cleaning step is provided [in the data folder](data/lgd_wn_taxonomy.ttl) in this repository.
 
+## Combining the class hierarchy with additional spatial data
+
+- http://download.geofabrik.de/ (e.g. Cologne: http://download.geofabrik.de/europe/germany/nordrhein-westfalen/koeln-regbez.html)
+- Load into PostgreSQL with PostGIS extension using `osm2pgsql` (https://osm2pgsql.org/)
+- Sparqlify (https://github.com/SmartDataAnalytics/Sparqlify)
+- Example mappings for POIs with bounding box
+
 ## License
 
 As this taxonomy is derived from WordNet and OpenStreetmap the following licenses apply:
