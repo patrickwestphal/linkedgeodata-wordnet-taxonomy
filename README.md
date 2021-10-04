@@ -39,6 +39,8 @@ This is done for two reasons. First, the labels are provided in many different l
 
 ### Linking both taxonomies
 
+To link both the WordNet and the LinkedGeoData taxonomies we used the [LIMES linking tool](https://github.com/dice-group/LIMES). LIMES proposes links based on a configured similarity score which holds between two resources of the respective input data sets. To link the WordNet and LinkedGeoData ontologies we used the trigram similarity of the classes' labels and we link them via the `rdfs:subClassOf` property. LIMES will create an N-Triples file containing all the additional `rdfs:subClassOf` statements. After merging all three datasets, i.e. the LinkedGeoData ontology, the WordNet taxonomy and the LIMES output, we have an integrated ontology combining and relating the class hierarchies of LinkedGeoData and WordNet. However, this automatically generated hierarchy may (and will) contain false `rdfs:subClassOf` relations as the generation only considered the bare labels. This means that a manual curation step has to follow, e.g. to remove `rdfs:subClassOf` relations between resources that have similar labels but are unrelated w.r.t their meaning. The LIMES configuration is [provided in this repo](config/limes_lgd_wn.xml).
+
 ### Manual curation
 
 ## License

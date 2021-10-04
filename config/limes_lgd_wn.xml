@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE LIMES SYSTEM "limes.dtd">
+
+<LIMES>
+    <PREFIX>
+        <NAMESPACE>http://www.w3.org/1999/02/22-rdf-syntax-ns#</NAMESPACE>
+        <LABEL>rdf</LABEL>
+    </PREFIX>
+    <PREFIX>
+        <NAMESPACE>http://www.w3.org/2000/01/rdf-schema#</NAMESPACE>
+        <LABEL>rdfs</LABEL>
+    </PREFIX>
+    <PREFIX>
+        <NAMESPACE>http://www.w3.org/2002/07/owl#</NAMESPACE>
+        <LABEL>owl</LABEL>
+    </PREFIX>
+    <SOURCE>
+        <ID>lgd</ID>
+        <ENDPOINT>/path/to/lgd_ontology.ttl</ENDPOINT>
+        <VAR>?x</VAR>
+        <PAGESIZE>-1</PAGESIZE>
+        <RESTRICTION>?x ?p1 ?o1</RESTRICTION>
+        <PROPERTY>rdfs:label AS nolang->lowercase RENAME label</PROPERTY>
+        <TYPE>TURTLE</TYPE>
+    </SOURCE>
+    <TARGET>
+        <ID>wn</ID>
+        <ENDPOINT>/path/to/wordnet_taxonomy.ttl</ENDPOINT>
+        <VAR>?y</VAR>
+        <PAGESIZE>-1</PAGESIZE>
+        <RESTRICTION>?y ?p2 ?o2</RESTRICTION>
+        <PROPERTY>rdfs:label RENAME label</PROPERTY>
+        <TYPE>TURTLE</TYPE>
+    </TARGET>
+    <METRIC>
+        trigrams(x.label, y.label)|0.8
+    </METRIC>
+    <ACCEPTANCE>
+        <THRESHOLD>0.98</THRESHOLD>
+        <FILE>accepted.nt</FILE>
+        <RELATION>rdfs:subClassOf</RELATION>
+    </ACCEPTANCE>
+    <REVIEW>
+        <THRESHOLD>0.95</THRESHOLD>
+        <FILE>reviewme.nt</FILE>
+        <RELATION>owl:sameAs</RELATION>
+    </REVIEW>
+</LIMES>
