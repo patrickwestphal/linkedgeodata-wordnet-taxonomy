@@ -47,14 +47,69 @@ In the manual creation step we removed all WordNet classes which are not supercl
 
 ## Combining the class hierarchy with additional spatial data
 
-- http://download.geofabrik.de/ (e.g. Cologne: http://download.geofabrik.de/europe/germany/nordrhein-westfalen/koeln-regbez.html)
-- Load into PostgreSQL with PostGIS extension using `osm2pgsql` (https://osm2pgsql.org/)
+To actually _use_ the combined class hierarchy with spatial data we recommend using the resources of the LinkedGeoData project as they already use the classes of the LinkedGeoData ontology. Besides the downloads [provided on the project website](http://downloads.linkedgeodata.org/releases) one can also generate RDF data using the LinkedGeoData ontology from OpenStreetMap. This is explained in the following.
+
+### Download OpenStreetMap data and load it into PostgreSQL
+
+There are many options for downloading OpenStreetMap data on the [GEOFABRIK website](http://download.geofabrik.de/). It offers data extracts for different continents, countries, states and sub-regions. To exemplify the data loading we will use the [`.osm.pbf` file of the Bremen area](http://download.geofabrik.de/europe/germany/bremen-latest.osm.pbf). After download we will make use of the [`osm2pgsql` tool](https://osm2pgsql.org/) which is available for Linux, Mac OS, Windows and FreeBSD. `osm2pgsql` will take care of loading the OpenStreetMap data into a PostgreSQL database. To do that PostgreSQL has to be installed with the [PostGIS extension](http://postgis.net/). Further, a database has to be created and the PostGIS extension loaded as follows:
+
+```bash
+postgres@oklasos:~$ createdb osm_bremen
+postgres@oklasos:~$ psql osm_bremen
+psql (13.3 (Debian 13.3-1))
+Type "help" for help.
+
+osm_bremen=# CREATE EXTENSION postgis;
+```
+
+Now, the database is prepared, but empty. To load the `.osm.pbf` covering the Bremen area into it, `osm2pgsql` has to be called as follows:
+
+```bash
+$ osm2pgsql -d osm_bremen -U postgres bremen-latest.osm.pbf 
+2021-10-05 11:38:03  osm2pgsql version 1.4.1
+Password:
+2021-10-05 11:38:05  Database version: 13.3 (Debian 13.3-1)
+2021-10-05 11:38:05  PostGIS version: 3.1
+2021-10-05 11:38:05  Node-cache: cache=800MB, maxblocks=12800*65536, allocation method=3
+2021-10-05 11:38:05  Setting up table 'planet_osm_point'
+2021-10-05 11:38:05  Setting up table 'planet_osm_line'
+2021-10-05 11:38:05  Setting up table 'planet_osm_polygon'
+2021-10-05 11:38:05  Setting up table 'planet_osm_roads'
+2021-10-05 11:38:09  Reading input files done in 4s.
+[...]
+```
+
+After having loaded the OpenStreetMap data of Bremen you should see the respective tables in the `osm_bremen` database:
+
+```bash
+$ psql osm_bremen
+psql (13.3 (Debian 13.3-1))
+Type "help" for help.
+
+osm_bremen=# \d+
+                                  List of relations
+ Schema |        Name        | Type  |  Owner   | Persistence |  Size   | Description 
+--------+--------------------+-------+----------+-------------+---------+-------------
+ public | geography_columns  | view  | postgres | permanent   | 0 bytes | 
+ public | geometry_columns   | view  | postgres | permanent   | 0 bytes | 
+ public | planet_osm_line    | table | postgres | permanent   | 22 MB   | 
+ public | planet_osm_point   | table | postgres | permanent   | 6376 kB | 
+ public | planet_osm_polygon | table | postgres | permanent   | 48 MB   | 
+ public | planet_osm_roads   | table | postgres | permanent   | 2976 kB | 
+ public | spatial_ref_sys    | table | postgres | permanent   | 6976 kB | 
+(7 rows)
+
+osm_bremen=#
+```
+
+### Installing Sparqlify
+
 - Sparqlify (https://github.com/SmartDataAnalytics/Sparqlify)
 - Example mappings for POIs with bounding box
 
 ## License
 
-As this taxonomy is derived from WordNet and OpenStreetmap the following licenses apply:
+As this taxonomy is derived from WordNet and OpenStreetMap the following licenses apply:
 
 - [WordNet 3.0 license](https://wordnet.princeton.edu/license-and-commercial-use)
 - [Open Database License (ODbL)](https://opendatacommons.org/licenses/odbl/)
