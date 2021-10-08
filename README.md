@@ -51,60 +51,66 @@ To actually _use_ the combined class hierarchy with spatial data we recommend us
 
 ### Download OpenStreetMap data and load it into PostgreSQL
 
-There are many options for downloading OpenStreetMap data on the [GEOFABRIK website](http://download.geofabrik.de/). It offers data extracts for different continents, countries, states and sub-regions. To exemplify the data loading we will use the [`.osm.pbf` file of the Bremen area](http://download.geofabrik.de/europe/germany/bremen-latest.osm.pbf). After download we will make use of the [`osm2pgsql` tool](https://osm2pgsql.org/) which is available for Linux, Mac OS, Windows and FreeBSD. `osm2pgsql` will take care of loading the OpenStreetMap data into a PostgreSQL database. To do that PostgreSQL has to be installed with the [PostGIS extension](http://postgis.net/). Further, a database has to be created and the PostGIS extension loaded as follows:
+There are many options for downloading OpenStreetMap data on the [GEOFABRIK website](http://download.geofabrik.de/). It offers data extracts for different continents, countries, states and sub-regions. To exemplify the data loading we will use the loading script provided by the LinkedGeoData project. To get it, the following steps are needed.
 
 ```
-postgres@oklasos:~$ createdb osm_bremen
-postgres@oklasos:~$ psql osm_bremen
-psql (13.3 (Debian 13.3-1))
-Type "help" for help.
+$ git clone https://github.com/GeoKnow/LinkedGeoData.git
+$ cd LinkedGeoData/linkedgeodata-cli/bin/
+$ ./lgd-createdb.sh -h localhost -d lgd_bremen -U postgres -W postgres -f /path/to/bremen-latest.osm.pbf  -n lgd_bremen -N
+-------------------------------------------------------------------
+Your settings are:
 
-osm_bremen=# CREATE EXTENSION postgis;
-```
+Database
+  Name: lgd_bremen
+  Host: localhost
+  Username: postgres
+  Password: po...
+  Password already configured: 1
 
-Now, the database is prepared, but empty. To load the `.osm.pbf` covering the Bremen area into it, `osm2pgsql` has to be called as follows:
+Paths
+  Osmosis SQL files: /usr/share/doc/osmosis/examples
+  PostGIS files: /usr/share/postgresql/13/contrib/postgis-3.1
+  LGD-SQL files: ../../linkedgeodata-core/src/main/resources/org/aksw/linkedgeodata/sql
 
-```
-$ osm2pgsql -d osm_bremen -U postgres bremen-latest.osm.pbf 
-2021-10-05 11:38:03  osm2pgsql version 1.4.1
-Password:
-2021-10-05 11:38:05  Database version: 13.3 (Debian 13.3-1)
-2021-10-05 11:38:05  PostGIS version: 3.1
-2021-10-05 11:38:05  Node-cache: cache=800MB, maxblocks=12800*65536, allocation method=3
-2021-10-05 11:38:05  Setting up table 'planet_osm_point'
-2021-10-05 11:38:05  Setting up table 'planet_osm_line'
-2021-10-05 11:38:05  Setting up table 'planet_osm_polygon'
-2021-10-05 11:38:05  Setting up table 'planet_osm_roads'
-2021-10-05 11:38:09  Reading input files done in 4s.
+Dataset
+  OSM file to load: /path/to/bremen-latest.osm.pbf
+  Dataset name: lgd_bremen
+  Skip Nominatim: true
+-------------------------------------------------------------------
+Press [Enter] to start loading or [CTRL+C] to abort
 [...]
 ```
 
-After having loaded the OpenStreetMap data of Bremen you should see the respective tables in the `osm_bremen` database:
-
-```
-$ psql osm_bremen
-psql (13.3 (Debian 13.3-1))
-Type "help" for help.
-
-osm_bremen=# \d+
-                                  List of relations
- Schema |        Name        | Type  |  Owner   | Persistence |  Size   | Description 
---------+--------------------+-------+----------+-------------+---------+-------------
- public | geography_columns  | view  | postgres | permanent   | 0 bytes | 
- public | geometry_columns   | view  | postgres | permanent   | 0 bytes | 
- public | planet_osm_line    | table | postgres | permanent   | 22 MB   | 
- public | planet_osm_point   | table | postgres | permanent   | 6376 kB | 
- public | planet_osm_polygon | table | postgres | permanent   | 48 MB   | 
- public | planet_osm_roads   | table | postgres | permanent   | 2976 kB | 
- public | spatial_ref_sys    | table | postgres | permanent   | 6976 kB | 
-(7 rows)
-
-osm_bremen=#
-```
+After having loaded the OpenStreetMap data of Bremen you should see the respective tables in the `osm_bremen` database.
 
 ### Installing Sparqlify
 
-- Sparqlify (https://github.com/SmartDataAnalytics/Sparqlify)
+The Sparqlify RDB2RDF conversion tool can be retrieved from the [GitHub project page](https://github.com/SmartDataAnalytics/Sparqlify) via the following Git command:
+
+
+```
+$ git clone https://github.com/SmartDataAnalytics/Sparqlify.git
+```
+
+The Sparqlify tool is built via Maven like this:
+
+```
+$ cd Sparqlify/sparqlify-cli/
+$ mvn clean package -DskipTests=true
+[INFO] Scanning for projects...
+[INFO] Inspecting build with total of 1 modules...
+[INFO] Installing Nexus Staging features:
+[INFO]   ... total of 1 executions of maven-deploy-plugin replaced with nexus-staging-maven-plugin
+[INFO] 
+[INFO] ------------------< org.aksw.sparqlify:sparqlify-cli >------------------
+[INFO] Building Sparqlify SPARQL->SQL rewriter - Cli 0.9.0
+[INFO] --------------------------------[ jar ]---------------------------------
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-surefire-plugin/3.0.0-M5/maven-surefire-plugin-3.0.0-M5.pom
+Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-surefire-plugin/3.0.0-M5/maven-surefire-plugin-3.0.0-M5.pom (8.0 kB at 23 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire/3.0.0-M5/surefire-3.0.0-M5.pom
+[...]
+```
+
 - Example mappings for POIs with bounding box
 
 ## License
