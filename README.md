@@ -53,7 +53,7 @@ To actually _use_ the combined class hierarchy with spatial data we recommend us
 
 There are many options for downloading OpenStreetMap data on the [GEOFABRIK website](http://download.geofabrik.de/). It offers data extracts for different continents, countries, states and sub-regions. To exemplify the data loading we will use the [`.osm.pbf` file of the Bremen area](http://download.geofabrik.de/europe/germany/bremen-latest.osm.pbf). After download we will make use of the [`osm2pgsql` tool](https://osm2pgsql.org/) which is available for Linux, Mac OS, Windows and FreeBSD. `osm2pgsql` will take care of loading the OpenStreetMap data into a PostgreSQL database. To do that PostgreSQL has to be installed with the [PostGIS extension](http://postgis.net/). Further, a database has to be created and the PostGIS extension loaded as follows:
 
-```bash
+```
 postgres@oklasos:~$ createdb osm_bremen
 postgres@oklasos:~$ psql osm_bremen
 psql (13.3 (Debian 13.3-1))
@@ -64,7 +64,7 @@ osm_bremen=# CREATE EXTENSION postgis;
 
 Now, the database is prepared, but empty. To load the `.osm.pbf` covering the Bremen area into it, `osm2pgsql` has to be called as follows:
 
-```bash
+```
 $ osm2pgsql -d osm_bremen -U postgres bremen-latest.osm.pbf 
 2021-10-05 11:38:03  osm2pgsql version 1.4.1
 Password:
@@ -81,7 +81,7 @@ Password:
 
 After having loaded the OpenStreetMap data of Bremen you should see the respective tables in the `osm_bremen` database:
 
-```bash
+```
 $ psql osm_bremen
 psql (13.3 (Debian 13.3-1))
 Type "help" for help.
